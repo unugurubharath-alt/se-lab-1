@@ -1,0 +1,82 @@
+@startuml
+' PES University - Dept. of CSE
+' Lab 1: Requirements Engineering & UML Use-Case Modelling
+' Problem Statement #35: Customizable Subscription Box Scheduler
+
+left to right direction
+skinparam packageStyle rectangle
+skinparam roundcorner 12
+skinparam shadowing false
+skinparam handwritten false
+skinparam actorStyle awesome
+
+skinparam usecase {
+    BackgroundColor #F8FAFC
+    BorderColor #2563EB
+    ArrowColor #1E293B
+    FontName "Helvetica"
+    FontSize 12
+}
+
+skinparam actor {
+    BackgroundColor #EFF6FF
+    BorderColor #1E293B
+    FontName "Helvetica"
+    FontSize 12
+}
+
+actor "Subscriber\n(Customer)" as Sub
+actor "Fulfillment Lead\n(Warehouse Operations)" as FL
+actor "Payment Gateway\n& Billing API" as PG <<System>>
+
+rectangle "Customizable Subscription Box Scheduler System" {
+    package "Subscriber Customization & Lifecycle Subsystem" {
+        usecase "UC-01: Manage Preference Tags\n& Dietary/Genre Profiles" as UC1
+        usecase "UC-02: Customize Monthly Box\n(Swap Items)" as UC2
+        usecase "UC-03: Pause or Skip\nBilling Cycle" as UC3
+        usecase "UC-04: View Box Summary\n& Tracking Status" as UC4
+        usecase "UC-07: Select Premium Add-on\n/ Gift Item" as UC7
+        usecase "UC-08: Apply Promotional\nDiscount / Coupon" as UC8
+    }
+
+    package "Business Rules & Validation Core" {
+        usecase "UC-05: Validate Customization\nCutoff Window (<48h)" as UC5
+        usecase "UC-06: Verify Real-Time\nInventory Stock" as UC6
+        usecase "UC-12: Lock Customization\nWindow" as UC12
+    }
+
+    package "Warehouse Fulfillment & Operations Subsystem" {
+        usecase "UC-10: Generate Monthly\nFulfillment Manifest" as UC10
+        usecase "UC-11: Batch Export Courier\nShipping Labels" as UC11
+    }
+
+    package "Billing & External Services Subsystem" {
+        usecase "UC-09: Process Recurring\nRenewal Billing" as UC9
+    }
+}
+
+' Actor Associations
+Sub --> UC1
+Sub --> UC2
+Sub --> UC3
+Sub --> UC4
+
+FL --> UC10
+FL --> UC11
+
+' System Actor Association
+UC9 --> PG
+
+' <<include>> Relationships
+UC2 ..> UC5 : <<include>>
+UC2 ..> UC6 : <<include>>
+UC3 ..> UC5 : <<include>>
+UC10 ..> UC12 : <<include>>
+UC10 ..> UC11 : <<include>>
+
+' <<extend>> Relationships
+UC7 ..> UC2 : <<extend>>\n(Add-on Selected)
+UC8 ..> UC2 : <<extend>>\n(Promo Applied)
+UC3 ..> UC9 : <<extend>>\n(Skip / Pause Cycle)
+
+@enduml
